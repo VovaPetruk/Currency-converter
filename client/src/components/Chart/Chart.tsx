@@ -159,67 +159,38 @@ const CurrencyChart: FC<ChartProps> = ({ fromCurrency, toCurrency }) => {
     };
 
     const fetchData = async () => {
-        const currentYear = new Date().getFullYear();
-        const dateArray = Array.from({ length: 6 }, (_, i) => ({
-            date: `${currentYear - 1}-${String(i * 2 + 1).padStart(2, "0")}-01`,
-            base_currency: fromCurrency,
-            currencies: toCurrency,
-        }));
-
+        setLoading(true);
         try {
-            const delay = (ms: number) =>
-                new Promise((resolve) => setTimeout(resolve, ms));
-            const results = [];
+            const currentYear = new Date().getFullYear();
+            const requests = Array.from({ length: 6 }, (_, i) => {
+                const date = `${currentYear - 1}-${String(i * 2 + 1).padStart(
+                    2,
+                    "0"
+                )}-01`;
+                return fetch(
+                    `/api/currency/historical?date=${date}&base_currency=${fromCurrency}&currencies=${toCurrency}`
+                );
+            });
 
-            for (const params of dateArray) {
-                try {
-                    const response = await fetch(
-                        `/api/currency/historical?date=${params.date}&base_currency=${params.base_currency}&currencies=${params.currencies}`
-                    );
-                    const data: ApiResponse = await response.json();
-                    console.log("API Response:", data);
-
-                    if (data?.data) {
-                        const rateObj = Object.values(data.data)[0] as {
-                            [key: string]: number;
-                        };
-                        const rate = rateObj?.[toCurrency];
-                        console.log("Rate:", rate);
-
-                        if (typeof rate === "number" && !isNaN(rate)) {
-                            results.push(rate);
-                        } else {
-                            console.warn(
-                                `Invalid rate for date ${params.date}`
-                            );
-                            results.push(NaN);
-                        }
-                    } else {
-                        console.warn(`No data for date ${params.date}`);
-                        results.push(NaN);
-                    }
-                } catch (err) {
-                    console.warn(`Failed for date ${params.date}:`, err);
-                    results.push(NaN);
-                }
-                await delay(2000);
-            }
-
-            console.log("Final Results:", results);
-
-            const validResults = results.filter(
-                (value) => !isNaN(value) && value !== null
+            const responses = await Promise.all(requests);
+            const results = await Promise.all(
+                responses.map((res) => res.json())
             );
 
-            if (validResults.length === 0) {
-                setError("No valid data received");
-            } else {
-                setPoints(validResults);
-            }
-            setLoading(false);
-        } catch (error) {
-            console.error("API call failed:", error);
-            setError("Failed to fetch exchange rates");
+            const rates = results.map((data: ApiResponse) => {
+                const rateObj = Object.values(data.data)[0];
+                return rateObj?.[toCurrency] ?? NaN;
+            });
+
+            const validRates = rates.filter((rate) => !isNaN(rate));
+            if (validRates.length === 0)
+                throw new Error("No valid rates found");
+
+            setPoints(validRates);
+        } catch (err) {
+            setError("Failed to load data");
+            console.error(err);
+        } finally {
             setLoading(false);
         }
     };
