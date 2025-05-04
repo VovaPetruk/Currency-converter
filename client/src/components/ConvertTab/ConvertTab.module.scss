@@ -1,0 +1,201 @@
+$primary-blue: #3500d3;
+$dark-blue: #1b006d;
+$background-dark: #0c0032;
+$accent-orange: #ff4500;
+$white: #ffffff;
+
+.wrapper {
+    width: 100%;
+    height: 48%;
+    background-color: $background-dark;
+    border-radius: 60px;
+    padding-top: 40px;
+    position: relative;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.wrap {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.input {
+    width: 60%;
+    height: 40%;
+    background: linear-gradient(135deg, $primary-blue, $dark-blue);
+    border-radius: 50px;
+    font-size: xx-large;
+    color: $white;
+    padding-left: 4%;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+
+    &:focus {
+        border-color: $accent-orange;
+        outline: none;
+        box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+    }
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    &[type="number"] {
+        -moz-appearance: textfield;
+    }
+}
+
+.dropdownContainer {
+    position: relative;
+    width: 30%;
+    height: 40%;
+    display: flex;
+    align-items: center;
+}
+
+.dropdownList {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background: linear-gradient(135deg, $primary-blue, $dark-blue);
+    border-radius: 50px;
+    color: $white;
+    font-size: xx-large;
+    padding-left: 4%;
+    padding-right: 45px;
+    border: 2px solid transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    outline: none;
+    z-index: 10;
+    transition: all 0.3s ease;
+
+    &::-ms-expand {
+        display: none;
+    }
+
+    &:focus {
+        border-color: $accent-orange;
+        box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+    }
+
+    &:hover {
+        border-color: $accent-orange;
+    }
+
+    & option {
+        background-color: $dark-blue;
+        color: $white;
+        font-size: large;
+        padding: 10px;
+
+        &:hover,
+        &:focus {
+            background-color: rgba(255, 69, 0, 0.3);
+        }
+    }
+}
+
+.img {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    pointer-events: all;
+    z-index: 20;
+    transition: all 0.3s ease;
+
+    &:hover {
+        filter: drop-shadow(0 0 3px $accent-orange);
+    }
+}
+
+.convert-btn {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        135deg,
+        $accent-orange,
+        darken($accent-orange, 10%)
+    );
+    border: none;
+    border-radius: 50px;
+    padding: 10px 25px;
+    color: $white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(255, 69, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 30;
+
+    &:hover {
+        transform: translateX(-50%) translateY(-2px);
+        box-shadow: 0 8px 15px rgba(255, 69, 0, 0.5);
+    }
+
+    &:active {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+        );
+        animation: shineEffect 3s infinite;
+    }
+}
+
+@keyframes shineEffect {
+    0% {
+        left: -100%;
+    }
+    20% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.valueChange {
+    animation: pulse 0.5s ease;
+}

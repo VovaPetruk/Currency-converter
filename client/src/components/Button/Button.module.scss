@@ -1,0 +1,85 @@
+$primary-gradient-start: #27009b;
+$primary-gradient-end: #1b006d;
+$accent-color: #b73201;
+$button-gradient-start: #ff4500;
+$button-gradient-end: #9a2a00;
+$input-bg: #190061;
+$border-radius-large: 62px;
+$border-radius-medium: 50px;
+$box-shadow-depth: 0 15px 30px rgba(0, 0, 0, 0.25);
+$transition-default: all 0.3s ease;
+
+.btn {
+    height: 7vh;
+    width: 10vw;
+    background: linear-gradient(
+        145deg,
+        $button-gradient-start,
+        $button-gradient-end
+    );
+    position: relative;
+    border-radius: $border-radius-medium;
+    font-size: 1.8rem;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: $transition-default;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(154, 42, 0, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+
+    // Shine effect
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        transition: left 0.7s ease;
+        pointer-events: none;
+    }
+
+    &:hover {
+        border: 1px solid white;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3),
+            0 5px 10px rgba(154, 42, 0, 0.4);
+        background: linear-gradient(
+            145deg,
+            lighten($button-gradient-start, 5%),
+            $button-gradient-end
+        );
+
+        &::before {
+            left: 100%;
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2),
+            0 2px 5px rgba(154, 42, 0, 0.3);
+    }
+
+    // Pulsating effect on edges
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3),
+            0 5px 15px rgba(0, 0, 0, 0.2);
+        animation: pulse-edge 1.5s infinite;
+    }
+}
+@media (max-width: 768px) {
+    .btn {
+        width: 20vw;
+        font-size: 1.2rem;
+    }
+}

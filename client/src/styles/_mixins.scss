@@ -1,0 +1,19 @@
+@mixin adaptiveSize(
+    $childrenWith,
+    $parentWith,
+    $childrenHeight,
+    $parentHeight
+) {
+    width: $childrenWith / $parentWith * 100%;
+    height: $childrenHeight / $parentHeight * 100%;
+}
+
+@mixin adaptivePosition(
+    $childrenTop,
+    $parentHeight,
+    $childrenLeft,
+    $parentWith
+) {
+    top: $childrenTop / $parentHeight * 100%;
+    left: $childrenLeft / $parentWith * 100%;
+}
