@@ -1,13 +1,26 @@
-@import "../../styles/mixins";
+@mixin responsiveSize($width-ratio, $height-ratio) {
+    width: percentage($width-ratio);
+    aspect-ratio: $width-ratio / $height-ratio;
+    max-width: 1170px; // Фіксуємо максимальний розмір
+}
 
-.wrapper {
-    background-color: #282828;
-    @include adaptiveSize(1170px, 1600px, 770px, 900px);
-    border-radius: 62px;
-    @include adaptivePosition(65px, 900px, 215px, 1600px);
-    box-shadow: 0 0 35px 0 #3500d3;
-    position: relative;
+@mixin flexCenter {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.wrapper {
+    @include responsiveSize(1170/1600, 770/900);
+    @include flexCenter;
+    margin: 0 auto; // Центрування по горизонталі
+    background-color: #282828;
+    border-radius: clamp(20px, 4vw, 62px); // Адаптивні кути
+    box-shadow: 0 0 35px 0 #3500d3;
+    position: relative;
+
+    // Адаптація для малих екранів
+    @media (max-width: 768px) {
+        border-radius: clamp(15px, 3vw, 30px);
+    }
 }
