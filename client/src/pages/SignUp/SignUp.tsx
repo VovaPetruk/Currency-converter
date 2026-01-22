@@ -11,24 +11,49 @@ interface SignUpFormInputs {
     repeatPassword: string;
 }
 
+/**
+ * Компонент сторінки реєстрації користувача
+ * Використовує react-hook-form для валідації форми, локальний стан для обробки завантаження та повідомлень
+ */
 const SignUp: FC = () => {
+    // Стан завантаження під час запиту до сервера
     const [isLoading, setIsLoading] = useState(false);
+
+    // Помилка від сервера або клієнтська валідація (наприклад, паролі не співпадають)
     const [serverError, setServerError] = useState<string | null>(null);
+
+    // Повідомлення про успішну реєстрацію
     const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+
     const navigate = useNavigate();
 
+    // Ініціалізація react-hook-form з типізацією полів
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
-    } = useForm<SignUpFormInputs>();
+    } = useForm<SignUpFormInputs>({
+        mode: "onChange",
+        defaultValues: {
+            email: "",
+            password: "",
+            repeatPassword: "",
+        },
+    });
 
+    /**
+     * Обробник відправки форми
+     * Перевіряє співпадіння паролів, виконує POST-запит на реєстрацію,
+     * зберігає токен та перенаправляє користувача у разі успіху
+     */
     const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
+        // Клієнтська перевірка співпадіння паролів
         if (data.password !== data.repeatPassword) {
-            setServerError("Passwords do not match");
+            setServerError("Паролі не співпадають");
             return;
         }
+
         try {
             setIsLoading(true);
             setServerError(null);
@@ -36,7 +61,9 @@ const SignUp: FC = () => {
 
             const response = await fetch("http://localhost:5000/signUp", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     email: data.email,
                     password: data.password,
@@ -46,72 +73,115 @@ const SignUp: FC = () => {
             const responseData = await response.json();
 
             if (!response.ok) {
-                setServerError(responseData.message || "Registration error");
-            } else {
-                setServerSuccess(
-                    responseData.message || "Registration is successful"
-                );
-                localStorage.setItem("token", responseData.token);
-                reset();
-                navigate("/CurrencyList");
+                // Помилка від сервера (наприклад, email вже існує)
+                throw new Error(responseData.message || "Помилка реєстрації");
             }
+
+            // Успішна реєстрація
+            setServerSuccess(responseData.message || "Реєстрація успішна");
+
+            // Зберігаємо токен та автоматично авторизуємо користувача
+            localStorage.setItem("token", responseData.token);
+
+            // Очищення форми
+            reset();
+
+            // Перенаправлення на захищену сторінку
+            navigate("/CurrencyList", { replace: true });
         } catch (error) {
-            console.error("Server connection error:", error);
-            setServerError("Unable to connect to the server");
+            console.error("Помилка реєстрації:", error);
+
+            setServerError(
+                error instanceof Error
+                    ? error.message
+                    : "Неможливо підключитися до сервера"
+            );
         } finally {
             setIsLoading(false);
         }
     };
+
     return (
-        <form className={styles.signUp} onSubmit={handleSubmit(onSubmit)}>
-            {serverError && <div className={styles.error}>{serverError}</div>}
-            {serverSuccess && (
-                <div className={styles.success}>{serverSuccess}</div>
+        <form
+            className={styles.signUp}
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+        >
+            {/* Відображення помилок */}
+            {serverError && (
+                <div className={styles.error} role="alert">
+                    {serverError}
+                </div>
             )}
 
+            {/* Відображення повідомлення про успіх */}
+            {serverSuccess && (
+                <div className={styles.success} role="status">
+                    {serverSuccess}
+                </div>
+            )}
+
+            {/* Поле для email */}
             <Input
                 type="email"
-                placeholder="Enter your e-mail"
+                placeholder="Введіть ваш email"
                 style={{ height: "12%" }}
-                id={"email"}
+                id="email"
                 {...register("email", {
-                    required: "Email is required",
+                    required: "Email обов'язковий",
                     pattern: {
                         value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                        message: "Invalid email address",
+                        message: "Некоректний формат email",
                     },
                 })}
                 error={errors.email?.message}
+                disabled={isLoading}
             />
+
+            {/* Поле для пароля */}
             <Input
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Введіть пароль"
                 style={{ height: "12%" }}
-                id={"password"}
+                id="password"
                 {...register("password", {
-                    required: "Password is required",
+                    required: "Пароль обов'язковий",
+                    // Рекомендація: додати minLength: { value: 6, message: "Мінімум 6 символів" }
                 })}
                 error={errors.password?.message}
+                disabled={isLoading}
             />
+
+            {/* Поле для повторення пароля */}
             <Input
                 type="password"
-                placeholder="Repeat your password"
+                placeholder="Повторіть пароль"
                 style={{ height: "12%" }}
-                id={"repeatPassword"}
+                id="repeatPassword"
                 {...register("repeatPassword", {
-                    required: "Your passwords don't match",
+                    required: "Повторіть пароль",
+                    // Клієнтська перевірка співпадіння (додатково до onSubmit)
+                    validate: (value, formValues) =>
+                        value === formValues.password ||
+                        "Паролі не співпадають",
                 })}
                 error={errors.repeatPassword?.message}
+                disabled={isLoading}
             />
+
+            {/* Контейнер кнопок */}
             <div className={styles.btnContainer}>
+                {/* Кнопка переходу на сторінку входу */}
                 <Link to="/LogIn">
                     <Button
-                        descr={isLoading ? "Loading..." : "Log In"}
+                        descr={isLoading ? "Завантаження..." : "Увійти"}
                         disabled={isLoading}
                     />
                 </Link>
+
+                {/* Кнопка відправки форми реєстрації */}
                 <Button
-                    descr={isLoading ? "Loading..." : "Sign Up"}
+                    descr={isLoading ? "Завантаження..." : "Зареєструватися"}
                     disabled={isLoading}
                 />
             </div>

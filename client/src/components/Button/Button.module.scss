@@ -1,85 +1,158 @@
+// ====== КОЛЬОРОВА ПАЛІТРА ТА ДИЗАЙН-ТОКЕНИ ======
+
+// Початок та кінець основного градієнта (може використовуватись для фону)
 $primary-gradient-start: #27009b;
 $primary-gradient-end: #1b006d;
+
+// Акцентний колір (для важливих елементів, іконок, ховерів тощо)
 $accent-color: #b73201;
+
+// Градієнт кнопки (основний вигляд)
 $button-gradient-start: #ff4500;
 $button-gradient-end: #9a2a00;
+
+// Фон для input-полів
 $input-bg: #190061;
+
+// Радіуси скруглення (використовуються для уніфікації UI)
 $border-radius-large: 62px;
 $border-radius-medium: 50px;
+
+// Тінь для глибини елементів (card / button)
 $box-shadow-depth: 0 15px 30px rgba(0, 0, 0, 0.25);
+
+// Стандартна анімація переходів
 $transition-default: all 0.3s ease;
 
+// ====== СТИЛІ КНОПКИ ======
 .btn {
+    // Висота кнопки відносно висоти вікна
     height: 7vh;
+
+    // Ширина кнопки відносно ширини вікна
     width: 10vw;
+
+    // Фоновий градієнт кнопки
     background: linear-gradient(
         145deg,
         $button-gradient-start,
         $button-gradient-end
     );
+
+    // Потрібно для псевдоелемента ::before
     position: relative;
+
+    // Скруглені краї кнопки
     border-radius: $border-radius-medium;
+
+    // Розмір тексту
     font-size: 1.8rem;
+
+    // Забираємо стандартну рамку кнопки
     border: none;
+
+    // Колір тексту з легкою прозорістю
     color: rgba(255, 255, 255, 0.9);
+
+    // Курсор у вигляді руки при наведенні
     cursor: pointer;
+
+    // Плавні переходи для hover / active
     transition: $transition-default;
+
+    // Тінь для створення ефекту "піднятої" кнопки
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(154, 42, 0, 0.3);
+
+    // Легкий обʼєм для тексту
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+    // Ховаємо все, що виходить за межі кнопки
+    // (важливо для shine-ефекту)
     overflow: hidden;
 
-    // Shine effect
+    // ====== SHINE EFFECT (БЛИК) ======
     &::before {
         content: "";
         position: absolute;
         top: 0;
-        left: -100%;
+        left: -100%; // початково блиск поза кнопкою
         width: 100%;
         height: 100%;
+
+        // Градієнт для імітації відблиску
         background: linear-gradient(
             90deg,
             transparent,
             rgba(255, 255, 255, 0.2),
             transparent
         );
+
+        // Анімація руху блиску
         transition: left 0.7s ease;
+
+        // Щоб псевдоелемент не блокував кліки
         pointer-events: none;
     }
 
+    // ====== HOVER STATE ======
     &:hover {
+        // Тонка біла рамка при наведенні
         border: 1px solid white;
+
+        // Повністю білий текст
         color: white;
+
+        // Легке підняття кнопки
         transform: translateY(-3px);
+
+        // Посилена тінь для hover
         box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3),
             0 5px 10px rgba(154, 42, 0, 0.4);
+
+        // Трохи освітлюємо градієнт
         background: linear-gradient(
             145deg,
             lighten($button-gradient-start, 5%),
             $button-gradient-end
         );
 
+        // Запускаємо рух блиску
         &::before {
             left: 100%;
         }
     }
 
+    // ====== ACTIVE STATE (КЛІК) ======
     &:active {
+        // Повертаємо кнопку на місце
         transform: translateY(0);
+
+        // Менша тінь — ефект "натискання"
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2),
             0 2px 5px rgba(154, 42, 0, 0.3);
     }
 
-    // Pulsating effect on edges
+    // ====== FOCUS STATE (ДОСТУПНІСТЬ) ======
     &:focus {
+        // Прибираємо стандартний outline браузера
         outline: none;
+
+        // Кастомна рамка + тінь
         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3),
             0 5px 15px rgba(0, 0, 0, 0.2);
+
+        // Анімація пульсації по краях
         animation: pulse-edge 1.5s infinite;
     }
 }
+
+// ====== АДАПТИВНІСТЬ ======
 @media (max-width: 768px) {
     .btn {
+        // Збільшуємо ширину кнопки на мобільних
         width: 20vw;
+
+        // Зменшуємо розмір тексту
         font-size: 1.2rem;
     }
 }

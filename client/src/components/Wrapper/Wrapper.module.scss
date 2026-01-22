@@ -1,26 +1,25 @@
-@mixin responsiveSize($width-ratio, $height-ratio) {
-    width: percentage($width-ratio);
-    aspect-ratio: $width-ratio / $height-ratio;
-    max-width: 1170px; // Фіксуємо максимальний розмір
-}
+@import "../../styles/mixins"; // Імпорт глобальних міксинів (adaptiveSize, adaptivePosition тощо)
 
-@mixin flexCenter {
+// =============================================
+// Основний контейнер-обгортка для вмісту
+// =============================================
+.wrapper {
+    background-color: #282828; // Темно-сірий фон (майже чорний)
+
+    // Адаптивна ширина та висота залежно від розміру екрана
+    @include adaptiveSize(1170px, 1600px, 770px, 900px);
+    // Параметри: max-width, max-height, min-width, min-height
+
+    border-radius: 62px; // Дуже велике заокруглення — "puffy" дизайн
+
+    // Адаптивні зовнішні відступи (margin або position top/left)
+    @include adaptivePosition(65px, 900px, 215px, 1600px);
+    // Ймовірно: top, left, bottom, right — залежно від реалізації міксину
+
+    box-shadow: 0 0 35px 0 #3500d3; // Фіолетове сяйво навколо блоку (glow-ефект)
+
+    position: relative; // Для позиціонування дочірніх елементів
     display: flex;
     justify-content: center;
-    align-items: center;
-}
-
-.wrapper {
-    @include responsiveSize(1170/1600, 770/900);
-    @include flexCenter;
-    margin: 0 auto; // Центрування по горизонталі
-    background-color: #282828;
-    border-radius: clamp(20px, 4vw, 62px); // Адаптивні кути
-    box-shadow: 0 0 35px 0 #3500d3;
-    position: relative;
-
-    // Адаптація для малих екранів
-    @media (max-width: 768px) {
-        border-radius: clamp(15px, 3vw, 30px);
-    }
+    align-items: center; // Центрує вміст усередині
 }

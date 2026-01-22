@@ -1,32 +1,45 @@
-$primary-gradient-start: #27009b;
-$primary-gradient-end: #1b006d;
-$accent-color: #b73201;
-$button-gradient-start: #ff4500;
-$button-gradient-end: #9a2a00;
-$input-bg: #190061;
-$border-radius-large: 62px;
-$border-radius-medium: 50px;
-$box-shadow-depth: 0 15px 30px rgba(0, 0, 0, 0.25);
-$transition-default: all 0.3s ease;
+// =============================================
+// Глобальні змінні для сторінки авторизації
+// =============================================
+$primary-gradient-start: #27009b; // початок основного градієнта фону
+$primary-gradient-end: #1b006d; // кінець основного градієнта фону
+$accent-color: #b73201; // акцентний колір (помаранчевий) для помилок/підсвічування
+$button-gradient-start: #ff4500; // початок градієнта кнопок
+$button-gradient-end: #9a2a00; // кінець градієнта кнопок
+$input-bg: #190061; // фон для полів введення
+$border-radius-large: 62px; // велика заокругленість для основного контейнера
+$border-radius-medium: 50px; // середня заокругленість для кнопок тощо
+$box-shadow-depth: 0 15px 30px rgba(0, 0, 0, 0.25); // глибока тінь для об'єму
+$transition-default: all 0.3s ease; // стандартна плавна анімація
 
+// =============================================
+// Головний контейнер форми входу
+// =============================================
 .logIn {
     width: 75%;
     height: 70%;
+
+    // Основний темний градієнтний фон
     background: linear-gradient(
         135deg,
         $primary-gradient-start,
         $primary-gradient-end
     );
+
     position: relative;
     border-radius: $border-radius-large;
+
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
+
     box-shadow: $box-shadow-depth;
     overflow: hidden;
+
     transition: $transition-default;
 
+    // Декоративний радіальний блік (glassmorphism-ефект)
     &::before {
         content: "";
         position: absolute;
@@ -34,15 +47,18 @@ $transition-default: all 0.3s ease;
         right: -50%;
         width: 100%;
         height: 100%;
+
         background: radial-gradient(
             circle,
             rgba(255, 255, 255, 0.1) 0%,
             rgba(255, 255, 255, 0) 70%
         );
+
         border-radius: 50%;
         pointer-events: none;
     }
 
+    // Тонка світлова смужка знизу для акценту
     &::after {
         content: "";
         position: absolute;
@@ -50,15 +66,18 @@ $transition-default: all 0.3s ease;
         left: 0;
         width: 100%;
         height: 5px;
+
         background: linear-gradient(
             90deg,
             transparent,
             rgba($accent-color, 0.6),
             transparent
         );
+
         opacity: 0.7;
     }
 
+    // Стилі для повідомлень про помилки (p)
     p {
         font-size: large;
         color: $accent-color;
@@ -66,6 +85,7 @@ $transition-default: all 0.3s ease;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         position: relative;
 
+        // Підкреслення при наведенні (анімоване)
         &::after {
             content: "";
             position: absolute;
@@ -84,10 +104,14 @@ $transition-default: all 0.3s ease;
     }
 }
 
+// =============================================
+// Контейнер для кнопок (Увійти / Зареєструватися)
+// =============================================
 .btnContainer {
     height: 13%;
     width: 80%;
     position: relative;
+
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -95,7 +119,9 @@ $transition-default: all 0.3s ease;
     padding: 10px;
 }
 
-// Animations
+// =============================================
+// Анімація пульсації країв (може застосовуватися до помилок або кнопок)
+// =============================================
 @keyframes pulse-edge {
     0% {
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5),

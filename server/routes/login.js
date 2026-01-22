@@ -5,35 +5,57 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
+/**
+ * POST /login
+ * Обробка запиту на авторизацію користувача
+ *
+ * Очікувані дані в body:
+ * - email: string
+ * - password: string
+ */
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        //  Find a user by email
+        // Шукаємо користувача за email (поле email унікальне в моделі)
         const user = await User.findOne({ email });
+
+        // Якщо користувача не знайдено — повертаємо помилку (умисно однакове повідомлення для безпеки)
         if (!user) {
-            return res
-                .status(400)
-                .json({ message: "Incorrect email or password" });
+            return res.status(400).json({
+                message: "Неправильний email або пароль",
+            });
         }
 
-        // Check the correctness of the password
+        // Перевіряємо відповідність введеного пароля захешованому в базі
         const isMatch = await bcrypt.compare(password, user.password);
+
+        // Якщо пароль не співпадає — та сама помилка
         if (!isMatch) {
-            return res
-                .status(400)
-                .json({ message: "Incorrect email or password" });
+            return res.status(400).json({
+                message: "Неправильний email або пароль",
+            });
         }
 
-        // Creating a token
+        // Генеруємо JWT-токен, що містить ID користувача
+        // Термін дії токена — 1 година
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
-        // Response to the client
-        res.status(200).json({ message: "Successful entry", token });
+
+        // Успішна авторизація
+        res.status(200).json({
+            message: "Успішний вхід",
+            token,
+        });
     } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        // Логуємо помилку для дебагу на сервері
+        console.error("Помилка авторизації:", error);
+
+        // Клієнту повертаємо загальну помилку сервера
+        res.status(500).json({
+            message: "Внутрішня помилка сервера",
+        });
     }
 });
 

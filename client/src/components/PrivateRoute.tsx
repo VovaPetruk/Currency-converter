@@ -6,17 +6,24 @@ const PrivateRoute: React.FC = () => {
     const { showMessage } = useContext(MessageContext);
     const location = useLocation();
 
-    const isAuthenticated = localStorage.getItem("token") ? true : false;
+    // Простий спосіб перевірки авторизації через токен у localStorage
+    // У реальних проєктах краще використовувати більш безпечний підхід
+    const isAuthenticated = !!localStorage.getItem("token");
 
+    // Якщо користувач НЕ авторизований
     if (!isAuthenticated) {
+        // Показуємо повідомлення про помилку
         showMessage(
-            "Access is denied. Please log in to view this page.",
+            "Доступ заборонено. Будь ласка, увійдіть в акаунт.",
             "error"
         );
 
-        return <Navigate to="/" state={{ from: location.pathname }} />;
+        // Перенаправляємо на сторінку логіну
+        // Зберігаємо поточний шлях у state, щоб після логіну повернути користувача назад
+        return <Navigate to="/" state={{ from: location.pathname }} replace />;
     }
 
+    // Якщо користувач авторизований — рендеримо дочірні маршрути
     return <Outlet />;
 };
 

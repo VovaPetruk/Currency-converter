@@ -1,24 +1,36 @@
-$primary-blue: #3500d3;
-$dark-blue: #1b006d;
-$background-light: rgba(255, 255, 255, 0.03);
-$accent-orange: #ff4500;
+// =============================================
+// Основні кольорові змінні проєкту
+// =============================================
+$primary-blue: #3500d3; // головний синій
+$dark-blue: #1b006d; // темний фон/акцент
+$background-light: rgba(255, 255, 255, 0.03); // легкий напівпрозорий фон
+$accent-orange: #ff4500; // яскравий акцент для кнопок/помилок
 $white: #ffffff;
 
+// =============================================
+// Основний контейнер конвертера
+// =============================================
 .wrapper {
     height: 100%;
     width: 75%;
-    position: relative;
+    // Зсув вліво для візуального центрування в межах батьківського контейнера
     margin-left: -5%;
+    position: relative;
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
     overflow: hidden;
     border-radius: 16px;
+
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
     transition: all 0.4s ease;
+
     background: $background-light;
     padding: 20px 0;
 
+    // Тонка кольорова смужка зверху (можна використати градієнт або $primary-blue)
     &::before {
         content: "";
         position: absolute;
@@ -26,38 +38,50 @@ $white: #ffffff;
         left: 0;
         width: 100%;
         height: 5px;
-
+        background: linear-gradient(to right, $primary-blue, $accent-orange);
         opacity: 0.9;
     }
 
+    // Ефект підйому та посилення тіні при наведенні
     &:hover {
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.24);
         transform: translateY(-5px);
     }
 }
 
+// =============================================
+// Кнопка обміну валют (кругла, з градієнтом)
+// =============================================
 .btn {
+    // Позиціонування точно посередині між двома полями конвертації
     position: absolute;
+    left: 45%;
+    bottom: 44%;
+
     width: 7%;
     height: 12%;
     border-radius: 50px;
+
     background: linear-gradient(
         135deg,
         $accent-orange,
         darken($accent-orange, 15%)
     );
-    left: 45%;
-    bottom: 44%;
+
     z-index: 1001;
     border: none;
+
     box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
     cursor: pointer;
+
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
     display: flex;
     justify-content: center;
     align-items: center;
 
+    // Ефект блиску (shine) при наведенні
     &::before {
         content: "";
         position: absolute;
@@ -71,7 +95,7 @@ $white: #ffffff;
             rgba(255, 255, 255, 0.2),
             transparent
         );
-        transition: all 0.6s;
+        transition: left 0.6s;
     }
 
     &:hover {
@@ -88,21 +112,30 @@ $white: #ffffff;
     }
 }
 
+// =============================================
+// Іконка стрілок всередині кнопки
+// =============================================
 .img {
     width: 50%;
     height: 50%;
-    transform: rotate(90deg);
     object-fit: contain;
+
+    // Початкове положення — вертикальні стрілки
+    transform: rotate(90deg);
+
     transition: all 0.5s ease;
     filter: brightness(1.2) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
 
+    // Анімація повороту при наведенні на кнопку
     .btn:hover & {
         transform: rotate(270deg);
         filter: brightness(1.3) drop-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     }
 }
 
-// Pulsation animation when updating a value
+// =============================================
+// Анімація пульсації для оновленого значення
+// =============================================
 @keyframes pulse {
     0% {
         box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.7);
@@ -113,9 +146,4 @@ $white: #ffffff;
     100% {
         box-shadow: 0 0 0 0 rgba(255, 69, 0, 0);
     }
-}
-
-// Class to apply to the converted value when updating
-.valueChanged {
-    animation: pulse 1s 1;
 }

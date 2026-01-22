@@ -1,46 +1,69 @@
-// Variables
+// ====== ЗМІННІ (DESIGN TOKENS) ======
+
+// Основний фон (темний, космічний стиль)
 $bg-primary: #0c0032;
+
+// Вторинний фон (для SVG / карток)
 $bg-secondary: #190061;
+
+// Колір рамок та кнопок
 $border-color: #ff4500;
+
+// Акцентний колір (лінія графіка, glow, hover)
 $accent-color: #ff4500;
+
+// Основний колір тексту
 $text-color: #fff;
+
+// Радіуси заокруглення
 $border-radius-large: 60px;
 $border-radius-medium: 30px;
+
+// Плавний transition з ефектом "пружини"
 $transition-smooth: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-// Wrapper component
+// ====== WRAPPER (КОНТЕЙНЕР ГРАФІКА) ======
 .wrapper {
     height: 80%;
     width: 100%;
     position: relative;
+
+    // Основний фон контейнера
     background-color: $bg-primary;
+
     border-radius: $border-radius-large;
+
+    // Flex-центрування контенту
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     gap: 20px;
     padding: 15px;
+
+    // Глибока тінь для відчуття "картки"
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+
+    // Ховаємо декоративні ефекти за межами контейнера
     overflow: hidden;
 
-    // Add subtle gradient overlay
+    // ====== ДЕКОРАТИВНИЙ ГРАДІЄНТНИЙ OVERLAY ======
     &::before {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
+
         background: radial-gradient(
             circle at top right,
             rgba(53, 0, 211, 0.1),
             rgba(12, 0, 50, 0) 60%
         );
+
         pointer-events: none;
     }
 
-    // Add bottom highlight
+    // ====== НИЖНІЙ СВІТЛОВИЙ АКЦЕНТ ======
     &::after {
         content: "";
         position: absolute;
@@ -48,28 +71,35 @@ $transition-smooth: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         left: 20%;
         width: 60%;
         height: 2px;
+
         background: linear-gradient(
             90deg,
             transparent,
             rgba(53, 0, 211, 0.5),
             transparent
         );
+
         filter: blur(1px);
     }
 }
 
-// SVG Chart
+// ====== SVG ГРАФІК ======
 svg {
     width: 100%;
     height: 100%;
+
     border-radius: $border-radius-large;
     border: 1px solid $border-color;
+
     background-color: $bg-secondary;
+
+    // Світіння навколо SVG
     box-shadow: 0 0 25px rgba($accent-color, 0.5);
+
     position: relative;
     transition: $transition-smooth;
 
-    // Animated gradient
+    // ====== АНІМОВАНИЙ СВІТЛОВИЙ ГРАДІЄНТ ======
     &::before {
         content: "";
         position: absolute;
@@ -77,32 +107,35 @@ svg {
         left: -50%;
         width: 200%;
         height: 200%;
+
         background: radial-gradient(
             circle,
             rgba($accent-color, 0.08) 0%,
             rgba($accent-color, 0) 70%
         );
+
         animation: pulse 5s infinite ease-in-out;
     }
 
+    // Посилення glow при наведенні
     &:hover {
         box-shadow: 0 0 30px rgba($accent-color, 0.7);
     }
 }
 
-// Grid lines
+// ====== ЛІНІЇ СІТКИ ======
 #grid line {
     stroke: #282828;
     stroke-width: 0.5;
     transition: stroke 0.3s ease;
 
-    // Highlight every 5th line
+    // Кожна 5-та лінія темніша — візуальний ритм
     &:nth-child(5n) {
         stroke: #3a3a3a;
         stroke-width: 0.8;
     }
 
-    // Animate on hover
+    // Анімація при наведенні на SVG
     svg:hover & {
         stroke: #323232;
 
@@ -112,70 +145,93 @@ svg {
     }
 }
 
-// Chart line
+// ====== ЛІНІЯ ГРАФІКА ======
 polyline {
+    // Світіння лінії
     filter: drop-shadow(0 0 8px rgba($accent-color, 0.8));
+
+    // Анімація "малювання" лінії
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
     animation: drawLine 3s forwards ease-out;
 }
 
-// Data points
+// ====== ТОЧКИ ДАНИХ ======
 #points circle {
     fill: $text-color;
     stroke: $accent-color;
     stroke-width: 2;
+
+    // Glow навколо точок
     filter: drop-shadow(0 0 5px rgba($accent-color, 0.8));
+
     transition: all 0.3s ease;
+
+    // Спочатку приховані
     opacity: 0;
+
+    // Зʼявляються після промальовки лінії
     animation: fadeIn 0.5s forwards ease-out;
     animation-delay: 2.5s;
 
     &:hover {
         fill: $accent-color;
         stroke-width: 3;
-        r: 6; // Increase radius on hover
+
+        // Збільшення точки при hover
+        r: 6;
+
         filter: drop-shadow(0 0 8px rgba($accent-color, 1));
         cursor: pointer;
     }
 }
 
-// Button styling
+// ====== КНОПКА УПРАВЛІННЯ ======
 .chartButton {
     padding: 15px 30px;
     font-size: 16px;
+
     background-color: $border-color;
     color: $text-color;
+
     border: none;
     border-radius: $border-radius-medium;
     cursor: pointer;
+
     box-shadow: 0 0 10px rgba($accent-color, 0.5);
     transition: $transition-smooth;
+
     position: relative;
     overflow: hidden;
+
     font-weight: 500;
     letter-spacing: 0.5px;
 
-    // Add shine effect
+    // ====== SHINE-ЕФЕКТ ======
     &::before {
         content: "";
         position: absolute;
         top: 0;
         left: -100%;
+
         width: 100%;
         height: 100%;
+
         background: linear-gradient(
             90deg,
             transparent,
             rgba(255, 255, 255, 0.2),
             transparent
         );
+
         transition: left 0.7s ease;
     }
 
     &:hover {
         background-color: $accent-color;
         box-shadow: 0 0 20px rgba($accent-color, 0.7);
+
+        // "Підскакування" кнопки
         transform: scale(1.05) translateY(-3px);
 
         &::before {
@@ -195,7 +251,7 @@ polyline {
     }
 }
 
-// Animations
+// ====== АНІМАЦІЇ ======
 @keyframes pulse {
     0% {
         opacity: 0.5;
@@ -223,7 +279,7 @@ polyline {
     }
 }
 
-// Media queries for responsive design
+// ====== АДАПТИВНІСТЬ ======
 @media (max-width: 768px) {
     .wrapper {
         height: 70%;

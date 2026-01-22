@@ -1,5 +1,8 @@
-@import "../../styles/mixins";
+@import "../../styles/mixins"; // Імпорт глобальних міксинів (якщо використовуються)
 
+// =============================================
+// Основний контейнер навігації + вмісту
+// =============================================
 .container {
     position: relative;
     height: 80%;
@@ -9,14 +12,20 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
+
+    // Ефект скла (glassmorphism) — популярний у сучасних інтерфейсах
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+
     border-radius: 20px;
 }
 
+// =============================================
+// Вертикальна бічна панель навігації
+// =============================================
 .nav {
     height: 100%;
-    width: 80px;
+    width: 80px; // Вузька вертикальна панель
     background: linear-gradient(
         to bottom,
         rgba(255, 69, 0, 0.8),
@@ -32,6 +41,9 @@
     transition: all 0.3s ease;
 }
 
+// =============================================
+// Кнопка "Sign Out"
+// =============================================
 .signOutButton {
     height: 60px;
     width: 60px;
@@ -40,7 +52,9 @@
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-image: url("/icons/logout.svg"); // якщо є іконка
+
+    // Використання SVG як фонового зображення (якщо є іконка)
+    background-image: url("/icons/logout.svg");
     background-size: cover;
     background-position: center;
     color: white;
@@ -53,6 +67,9 @@
     }
 }
 
+// =============================================
+// Іконки пунктів меню
+// =============================================
 .img {
     height: 60px;
     width: 60px;
@@ -68,9 +85,12 @@
     }
 }
 
+// =============================================
+// Стиль активного пункту меню
+// =============================================
 .active {
     background-color: rgba(255, 215, 0, 0.3);
     border-radius: 25%;
-    box-shadow: 0 0 30px 10px gold;
+    box-shadow: 0 0 30px 10px gold; // Сильніше сяйво для активного стану
     border: 2px solid gold;
 }

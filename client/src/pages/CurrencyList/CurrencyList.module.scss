@@ -1,13 +1,20 @@
+// =============================================
+// Основний контейнер таблиці з курсами валют
+// =============================================
 .tableContainer {
     width: 75%;
+    // Обмеження висоти з можливістю скролу для великих списків
     max-height: 626px;
     overflow-y: auto;
 
     border-radius: 62px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+    // Кастомний скролбар (для Firefox)
     scrollbar-width: thin;
     scrollbar-color: #ff4500 #0c0032;
 
+    // Кастомний скролбар (для WebKit/Chrome/Safari)
     &::-webkit-scrollbar {
         width: 8px;
     }
@@ -23,14 +30,20 @@
     }
 }
 
+// =============================================
+// Заголовок таблиці (з назвою та кнопкою оновлення)
+// =============================================
 .tableHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
+
+    // Градієнтний фон для акценту
     background: linear-gradient(to right, #0c0032, #3300d1);
     border-top-left-radius: 62px;
     border-top-right-radius: 62px;
+
     color: white;
 
     h2 {
@@ -40,6 +53,9 @@
     }
 }
 
+// =============================================
+// Кнопка оновлення даних
+// =============================================
 .refreshButton {
     background: linear-gradient(to right, #ff4500, #9a2a00);
     color: white;
@@ -48,6 +64,7 @@
     padding: 8px 16px;
     cursor: pointer;
     font-weight: 600;
+
     transition: all 0.3s ease;
 
     &:hover {
@@ -60,21 +77,28 @@
     }
 }
 
+// =============================================
+// Основна таблиця
+// =============================================
 .table {
     width: 100%;
     background-color: transparent;
     border-collapse: collapse;
     position: relative;
-
     overflow: hidden;
 }
 
+// =============================================
+// Шапка таблиці (sticky для фіксації при скролі)
+// =============================================
 .thead {
+    // Фіксуємо шапку зверху при скролі
+    position: sticky;
     top: 0;
     z-index: 1;
+
+    // Градієнтний фон для виділення
     background: linear-gradient(to right, #ff4500, #9a2a00);
-    position: sticky;
-    height: auto;
 
     tr {
         height: 60px;
@@ -86,6 +110,7 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         text-align: left;
+
         transition: background-color 0.3s;
 
         &:hover {
@@ -94,11 +119,15 @@
     }
 }
 
+// =============================================
+// Тіло таблиці (рядки з валютами)
+// =============================================
 .tbody {
     tr {
         position: relative;
         transition: transform 0.2s, background-color 0.3s;
 
+        // Чергові рядки для контрасту
         &:nth-child(even) {
             background-color: #0c0032;
             color: white;
@@ -109,6 +138,7 @@
             color: white;
         }
 
+        // Ефект підйому та зміни фону при наведенні
         &:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -129,12 +159,16 @@
     }
 }
 
+// =============================================
+// Загальні стилі для комірок
+// =============================================
 th,
 td {
     padding: 15px 20px;
     vertical-align: middle;
 }
 
+// Ширина колонок для балансу
 th:nth-child(1),
 td:nth-child(1) {
     width: 50%;
@@ -150,6 +184,9 @@ td:nth-child(3) {
     width: 25%;
 }
 
+// =============================================
+// Стани завантаження та помилки
+// =============================================
 .loading,
 .error {
     display: flex;
@@ -159,6 +196,7 @@ td:nth-child(3) {
     height: 300px;
     width: 75%;
     margin: 0 auto;
+
     background-color: #0c0032;
     color: white;
     border-radius: 62px;
@@ -171,11 +209,15 @@ td:nth-child(3) {
     }
 }
 
+// Стилі для помилки (з червоним акцентом)
 .error {
     background-color: rgba(255, 69, 0, 0.1);
     border: 2px solid #ff4500;
 }
 
+// =============================================
+// Адаптивність для мобільних пристроїв
+// =============================================
 @media (max-width: 768px) {
     .tableContainer {
         width: 95%;

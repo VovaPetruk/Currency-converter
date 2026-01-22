@@ -1,43 +1,59 @@
+// =============================================
+// Глобальні змінні теми
+// =============================================
 :root {
     --primary-gradient: linear-gradient(to bottom, #3500d3, #1b006d);
     --border-radius-large: 60px;
     --border-radius-medium: 50px;
 }
 
+// =============================================
+// Контейнер, що об'єднує input + dropdown
+// =============================================
 .wrapper {
     width: 48%;
     height: 100%;
-    background-color: #0c0032;
+    background-color: #0c0032; // Темний фон основного блоку
     border-radius: 60px;
     display: flex;
     justify-content: space-around;
     align-items: center;
 }
 
+// =============================================
+// Поле введення суми
+// =============================================
 .input {
     width: 60%;
     height: 40%;
-    background: linear-gradient(to bottom, #3500d3, #1b006d);
+    background: var(--primary-gradient);
     border-radius: 50px;
     font-size: large;
     color: white;
     padding-left: 4%;
+    border: none;
+
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 2px rgba(53, 0, 211, 0.3);
+        box-shadow: 0 0 0 2px rgba(53, 0, 211, 0.3); // Легке сяйво при фокусі
     }
+
+    /* Прибираємо стрілочки у number-поля */
     -moz-appearance: textfield;
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
-    border: none;
 }
+
+// =============================================
+// Контейнер для вибору валюти
+// =============================================
 .dropdown {
     width: 20%;
     height: 40%;
-    background: linear-gradient(to bottom, #3500d3, #1b006d);
+    background: var(--primary-gradient);
     border-radius: 50px;
     font-size: large;
     color: white;
@@ -45,10 +61,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    &:hover {
-        cursor: pointer;
-    }
     position: relative;
+    cursor: pointer;
+
+    /* Псевдоелемент для стрілочки (якщо не використовується img) */
     &::after {
         content: "";
         position: absolute;
@@ -56,20 +72,26 @@
         top: 50%;
         transform: translateY(-50%);
         pointer-events: none;
+        /* тут зазвичай додають background або border для стрілочки */
     }
 }
 
+// =============================================
+// Нативний <select> всередині dropdown
+// =============================================
 .select {
     width: 80%;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border: none;
     background: transparent;
+    border: none;
     color: inherit;
     font-size: inherit;
     cursor: pointer;
     padding-right: 20px;
+
+    /* Повністю прибираємо стандартні стрілочки браузерів */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 
     &::-ms-expand {
         display: none;
@@ -81,17 +103,20 @@
     }
 }
 
+// =============================================
+// Кастомна іконка-стрілочка
+// =============================================
 .img {
     position: absolute;
     right: 10px;
     top: 50%;
-    transform: translateY(-50%) rotate(90deg);
+    transform: translateY(-50%) rotate(90deg); // Початковий поворот (часто →)
     width: 12px;
     height: 12px;
     cursor: pointer;
     transition: transform 0.2s ease;
 
     &.rotated {
-        transform: translateY(-50%) rotate(270deg);
+        transform: translateY(-50%) rotate(270deg); // Поворот вгору при відкритому стані
     }
 }

@@ -4,29 +4,51 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
+/**
+ * POST /signUp
+ * Реєстрація нового користувача
+ *
+ * Очікувані дані в body:
+ * - email: string (має бути унікальним)
+ * - password: string
+ */
 router.post("/signUp", async (req, res) => {
     const { email, password } = req.body;
+
     try {
-        // Checking for an existing user
+        // Перевіряємо, чи вже існує користувач з таким email
         const existingUser = await User.findOne({ email });
+
         if (existingUser) {
-            return res.status(400).json({ message: "The user already exists" });
+            return res.status(400).json({
+                message: "Користувач з таким email вже існує",
+            });
         }
-        // Password hashing
+
+        // Хешуємо пароль перед збереженням (10 раундів — стандартний рівень безпеки)
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new user
+        // Створюємо нового користувача
         const newUser = new User({
             email,
             password: hashedPassword,
         });
 
+        // Зберігаємо користувача в базу даних
         await newUser.save();
 
-        res.status(201).json({ message: "User registered successfully" });
+        // Успішна реєстрація
+        res.status(201).json({
+            message: "Користувача успішно зареєстровано",
+        });
     } catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        // Логуємо помилку для дебагу
+        console.error("Помилка реєстрації:", error);
+
+        // Клієнту повертаємо загальну помилку сервера
+        res.status(500).json({
+            message: "Внутрішня помилка сервера",
+        });
     }
 });
 

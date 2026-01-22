@@ -3,81 +3,100 @@ import { useState, useEffect } from "react";
 const CURRENCIES_DATA_KEY = "currenciesData";
 const EXCHANGE_RATES_KEY = "exchangeRatesData";
 const TIMESTAMP_KEY = "currenciesTimestamp";
-const CACHE_TTL = 3600000; // 1 hour
+const CACHE_TTL = 3600000; // 1 година в мілісекундах
 
 export interface Currency {
     symbol: string;
     name: string;
-    exchangeRate?: number;
+    exchangeRate?: number; // курс відносно базової валюти (зазвичай USD)
 }
 
 export interface CurrencyResponse {
-    [key: string]: Currency;
+    [key: string]: Currency; // приклад: { "USD": { symbol: "USD", name: "US Dollar", exchangeRate: 1 } }
 }
 
+/**
+ * Хук для отримання та управління списком валют та їх курсами
+ * Використовує кешування в localStorage з TTL = 1 година
+ */
 export const useCurrencyData = () => {
+    // Основний стан — словник усіх валют з їх метаданими та (опціонально) курсами
     const [currencies, setCurrencies] = useState<CurrencyResponse>({});
+
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Допоміжна функція: додає/оновлює поле exchangeRate для валют
+     * в поточному стані currencies
+     */
     const addExchangeRate = (exchangeRates: Record<string, number>) => {
         setCurrencies((prevCurrencies) => {
-            const updatedCurrencies = { ...prevCurrencies };
+            const updated = { ...prevCurrencies };
 
-            Object.keys(exchangeRates).forEach((key) => {
-                if (updatedCurrencies[key]) {
-                    updatedCurrencies[key].exchangeRate = exchangeRates[key];
+            Object.entries(exchangeRates).forEach(([code, rate]) => {
+                if (updated[code]) {
+                    updated[code] = {
+                        ...updated[code],
+                        exchangeRate: rate,
+                    };
                 }
             });
 
-            return updatedCurrencies;
+            return updated;
         });
     };
 
+    /**
+     * Основна функція завантаження даних про валюти та курси
+     * @param forceRefresh — примусово ігнорувати кеш і завантажувати з сервера
+     */
     const fetchData = async (forceRefresh = false) => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const cachedCurrenciesData =
-                localStorage.getItem(CURRENCIES_DATA_KEY);
-            const cachedExchangeRatesData =
-                localStorage.getItem(EXCHANGE_RATES_KEY);
+            // Перевірка кешу
+            const cachedCurrencies = localStorage.getItem(CURRENCIES_DATA_KEY);
+            const cachedRates = localStorage.getItem(EXCHANGE_RATES_KEY);
             const cachedTimestamp = localStorage.getItem(TIMESTAMP_KEY);
 
-            const isDataFresh =
-                cachedTimestamp &&
-                Date.now() - parseInt(cachedTimestamp) < CACHE_TTL;
+            const now = Date.now();
+            const isCacheFresh =
+                cachedTimestamp && now - Number(cachedTimestamp) < CACHE_TTL;
 
+            // Якщо є свіжий кеш і не потрібне примусове оновлення
             if (
-                cachedCurrenciesData &&
-                cachedExchangeRatesData &&
-                isDataFresh &&
+                cachedCurrencies &&
+                cachedRates &&
+                isCacheFresh &&
                 !forceRefresh
             ) {
-                const parsedCurrencies = JSON.parse(cachedCurrenciesData);
+                const parsedCurrencies = JSON.parse(cachedCurrencies);
                 setCurrencies(parsedCurrencies);
 
-                const parsedExchangeRates = JSON.parse(cachedExchangeRatesData);
-                addExchangeRate(parsedExchangeRates);
-            } else {
-                const [currenciesRes, ratesRes] = await Promise.all([
+                const parsedRates = JSON.parse(cachedRates);
+                addExchangeRate(parsedRates);
+            }
+            // Інакше — повне завантаження з API
+            else {
+                const [currenciesResponse, ratesResponse] = await Promise.all([
                     fetch("/api/currency/currencies"),
                     fetch("/api/currency/latest"),
                 ]);
 
-                if (!currenciesRes.ok || !ratesRes.ok) {
-                    throw new Error(
-                        "Error when receiving data from the server"
-                    );
+                if (!currenciesResponse.ok || !ratesResponse.ok) {
+                    throw new Error("Не вдалося отримати дані з сервера");
                 }
 
-                const currenciesData = await currenciesRes.json();
-                const ratesData = await ratesRes.json();
+                const currenciesData = await currenciesResponse.json();
+                const ratesData = await ratesResponse.json();
 
+                // Зберігаємо сирі дані
                 setCurrencies(currenciesData.data);
                 addExchangeRate(ratesData.data);
 
+                // Кешування на 1 годину
                 localStorage.setItem(
                     CURRENCIES_DATA_KEY,
                     JSON.stringify(currenciesData.data)
@@ -86,46 +105,53 @@ export const useCurrencyData = () => {
                     EXCHANGE_RATES_KEY,
                     JSON.stringify(ratesData.data)
                 );
-                localStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
+                localStorage.setItem(TIMESTAMP_KEY, now.toString());
             }
         } catch (err) {
-            console.error("Error loading currency data:", err);
+            console.error("Помилка завантаження даних валют:", err);
+
             setError(
-                "Currency data could not be loaded. Please try again later."
+                "Не вдалося завантажити дані про валюти. Спробуйте пізніше."
             );
 
-            const cachedCurrenciesData =
-                localStorage.getItem(CURRENCIES_DATA_KEY);
-            const cachedExchangeRatesData =
-                localStorage.getItem(EXCHANGE_RATES_KEY);
+            // Fallback на кеш навіть при помилці (найкраще, що ми можемо зробити)
+            const cachedCurrencies = localStorage.getItem(CURRENCIES_DATA_KEY);
+            const cachedRates = localStorage.getItem(EXCHANGE_RATES_KEY);
 
-            if (cachedCurrenciesData && cachedExchangeRatesData) {
-                const parsedCurrencies = JSON.parse(cachedCurrenciesData);
+            if (cachedCurrencies && cachedRates) {
+                const parsedCurrencies = JSON.parse(cachedCurrencies);
                 setCurrencies(parsedCurrencies);
 
-                const parsedExchangeRates = JSON.parse(cachedExchangeRatesData);
-                addExchangeRate(parsedExchangeRates);
+                const parsedRates = JSON.parse(cachedRates);
+                addExchangeRate(parsedRates);
             }
         } finally {
             setIsLoading(false);
         }
     };
 
+    /**
+     * Примусове оновлення даних:
+     * - видаляє весь кеш
+     * - виконує завантаження з сервера
+     */
     const refreshData = () => {
         localStorage.removeItem(CURRENCIES_DATA_KEY);
         localStorage.removeItem(EXCHANGE_RATES_KEY);
         localStorage.removeItem(TIMESTAMP_KEY);
+
         fetchData(true);
     };
 
+    // Початкове завантаження даних при монтуванні компонента
     useEffect(() => {
         fetchData();
     }, []);
 
     return {
-        currencies,
-        isLoading,
-        error,
-        refreshData,
+        currencies, // об'єкт усіх валют з метаданими та курсами
+        isLoading, // чи йде завантаження в даний момент
+        error, // текст помилки (якщо є)
+        refreshData, // метод для ручного оновлення даних
     };
 };

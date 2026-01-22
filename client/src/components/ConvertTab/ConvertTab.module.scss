@@ -1,9 +1,11 @@
-$primary-blue: #3500d3;
-$dark-blue: #1b006d;
-$background-dark: #0c0032;
-$accent-orange: #ff4500;
-$white: #ffffff;
+// ====== КОЛЬОРОВА ПАЛІТРА / DESIGN TOKENS ======
+$primary-blue: #3500d3; // основний синій (градієнти input/select)
+$dark-blue: #1b006d; // темніший синій
+$background-dark: #0c0032; // фон контейнера
+$accent-orange: #ff4500; // акцент (focus / hover / glow)
+$white: #ffffff; // білий текст
 
+// ====== ГОЛОВНИЙ WRAPPER КОМПОНЕНТА ======
 .wrapper {
     width: 100%;
     height: 48%;
@@ -11,90 +13,128 @@ $white: #ffffff;
     border-radius: 60px;
     padding-top: 40px;
     position: relative;
+
+    // (align-items працює тільки з flex, але не шкодить)
     align-items: center;
+
+    // Глибина контейнера
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+// ====== ВНУТРІШНІЙ FLEX-КОНТЕЙНЕР ======
 .wrap {
     width: 100%;
     height: 80%;
+
+    // Розташовує input і dropdown по горизонталі
     display: flex;
     justify-content: space-around;
     align-items: center;
+
     padding: 0 20px;
 }
 
+// ====== INPUT ДЛЯ ВВЕДЕННЯ СУМИ ======
 .input {
     width: 60%;
     height: 40%;
+
+    // Градієнтний фон
     background: linear-gradient(135deg, $primary-blue, $dark-blue);
+
     border-radius: 50px;
     font-size: xx-large;
     color: $white;
+
     padding-left: 4%;
+
+    // Спочатку рамка прозора (зʼявляється при focus)
     border: 2px solid transparent;
+
     transition: all 0.3s ease;
 
+    // ====== СТАН ФОКУСУ ======
     &:focus {
         border-color: $accent-orange;
         outline: none;
         box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
     }
 
+    // Плейсхолдер менш контрастний
     &::placeholder {
         color: rgba(255, 255, 255, 0.6);
     }
 
+    // ====== ПРИБИРАЄМО SPIN BUTTONS (NUMBER INPUT) ======
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
+
+    // Firefox
     &[type="number"] {
         -moz-appearance: textfield;
     }
 }
 
+// ====== КОНТЕЙНЕР ДЛЯ SELECT + СТРІЛКИ ======
 .dropdownContainer {
     position: relative;
     width: 30%;
     height: 40%;
+
     display: flex;
     align-items: center;
 }
 
+// ====== SELECT (DROPDOWN) ======
 .dropdownList {
     height: 100%;
     width: 100%;
     position: relative;
+
     background: linear-gradient(135deg, $primary-blue, $dark-blue);
     border-radius: 50px;
+
     color: $white;
     font-size: xx-large;
+
     padding-left: 4%;
-    padding-right: 45px;
+    padding-right: 45px; // місце під кастомну стрілку
+
     border: 2px solid transparent;
+
+    // Прибираємо нативну стрілку
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+
     cursor: pointer;
     outline: none;
+
+    // select має бути під img-стрілкою
     z-index: 10;
+
     transition: all 0.3s ease;
 
+    // IE fallback
     &::-ms-expand {
         display: none;
     }
 
+    // ====== FOCUS ======
     &:focus {
         border-color: $accent-orange;
         box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
     }
 
+    // ====== HOVER ======
     &:hover {
         border-color: $accent-orange;
     }
 
+    // ====== OPTION СТИЛІ ======
     & option {
         background-color: $dark-blue;
         color: $white;
@@ -108,16 +148,26 @@ $white: #ffffff;
     }
 }
 
+// ====== КАСТОМНА СТРІЛКА (IMG) ======
 .img {
     position: absolute;
     right: 15px;
     top: 50%;
+
+    // Центруємо вертикально + повертаємо
     transform: translateY(-50%) rotate(90deg);
+
     width: 20px;
     height: 20px;
+
     cursor: pointer;
+
+    // Дозволяємо кліки по зображенню
     pointer-events: all;
+
+    // Поверх select
     z-index: 20;
+
     transition: all 0.3s ease;
 
     &:hover {
@@ -125,53 +175,70 @@ $white: #ffffff;
     }
 }
 
+// ====== КНОПКА CONVERT ======
 .convert-btn {
     position: absolute;
     bottom: 15px;
     left: 50%;
+
+    // Центруємо кнопку
     transform: translateX(-50%);
+
     background: linear-gradient(
         135deg,
         $accent-orange,
         darken($accent-orange, 10%)
     );
+
     border: none;
     border-radius: 50px;
+
     padding: 10px 25px;
     color: $white;
+
     font-weight: bold;
     font-size: 16px;
+
     cursor: pointer;
+
     box-shadow: 0 5px 10px rgba(255, 69, 0, 0.3);
     transition: all 0.3s ease;
+
     z-index: 30;
 
+    // ====== HOVER ======
     &:hover {
         transform: translateX(-50%) translateY(-2px);
         box-shadow: 0 8px 15px rgba(255, 69, 0, 0.5);
     }
 
+    // ====== ACTIVE ======
     &:active {
         transform: translateX(-50%) translateY(0);
     }
 
+    // ====== SHINE EFFECT ======
     &::before {
         content: "";
         position: absolute;
         top: 0;
         left: -100%;
+
         width: 100%;
         height: 100%;
+
         background: linear-gradient(
             90deg,
             transparent,
             rgba(255, 255, 255, 0.3),
             transparent
         );
+
         animation: shineEffect 3s infinite;
     }
 }
 
+// ====== Анімація блиску кнопки ======
 @keyframes shineEffect {
     0% {
         left: -100%;
@@ -184,6 +251,7 @@ $white: #ffffff;
     }
 }
 
+// ====== Анімація пульсації (для зміни значення) ======
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -196,6 +264,7 @@ $white: #ffffff;
     }
 }
 
+// ====== КЛАС ДЛЯ АНІМАЦІЇ ЗМІНИ ЗНАЧЕННЯ ======
 .valueChange {
     animation: pulse 0.5s ease;
 }
